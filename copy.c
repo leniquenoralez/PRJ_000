@@ -10,12 +10,12 @@ int main(int argc, char **argv)
 {
 
     struct stat sourceStat;
-    struct stat destinationStat;
+    struct stat targetStat;
     char *DIRECTORY = "directory";
     char *FILE = "file";
 
     char *source = argv[1];
-    char *destination = argv[2];
+    char *target = argv[2];
 
     if (lstat(source, &sourceStat) < 0)
     {
@@ -23,9 +23,9 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    if (lstat(destination, &destinationStat) < 0)
+    if (lstat(target, &targetStat) < 0)
     {
-        fprintf(stderr, "failed getting destination file/directory info");
+        fprintf(stderr, "failed getting target file/directory info");
         return -1;
     }
     if (!S_ISREG(sourceStat.st_mode))
@@ -37,40 +37,40 @@ int main(int argc, char **argv)
     int sourceFd = open(source, O_RDONLY);
     char buf[4096];
     int remainingBytes;
-    int destinationFd;
-    if (S_ISDIR(destinationStat.st_mode))
+    int targetFd;
+    if (S_ISDIR(targetStat.st_mode))
     {
-        char *newFilePath = strncat(strncat(destination, "/",1), source, strlen(source));
-        destinationFd = open(newFilePath, O_WRONLY | O_CREAT, 0666);
-        if (destinationFd < 0)
+        char *newFilePath = strncat(strncat(target, "/",1), source, strlen(source));
+        targetFd = open(newFilePath, O_WRONLY | O_CREAT, 0666);
+        if (targetFd < 0)
         {
             fprintf(stderr, "error creating new file");
         }
         
         
     }else {
-        destinationFd = open(destination, O_WRONLY);
+        targetFd = open(target, O_WRONLY);
     }
 
     while ((remainingBytes = read(sourceFd, buf, 4096)) > 0) {
 
-        if (write(destinationFd, buf, remainingBytes) != remainingBytes)
+        if (write(targetFd, buf, remainingBytes) != remainingBytes)
         {
             close(sourceFd);
-            close(destinationFd);
-            fprintf(stderr, "error writing to destination file");
+            close(targetFd);
+            fprintf(stderr, "error writing to target file");
             return -1;
         }
 
         if (remainingBytes < 0)
         {
             close(sourceFd);
-            close(destinationFd);
+            close(targetFd);
             fprintf(stderr, "error reading data from source file");
             return -1;
         }
     }
     close(sourceFd);
-    close(destinationFd);
+    close(targetFd);
     return 0;
 }
