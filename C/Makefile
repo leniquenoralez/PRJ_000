@@ -1,4 +1,4 @@
-PROG=	copy
+PROG=	cbbcp
 OBJS=	copy.o
 CC = gcc
 
@@ -21,4 +21,4 @@ ${PROG}: ${OBJS}
 	${CC} ${CFLAGS} ${OBJS} -o ${PROG}
 
 clean:
-	rm -f copy *.o
+	rm -f cbbcp *.o
