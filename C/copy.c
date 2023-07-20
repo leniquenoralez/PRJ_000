@@ -9,6 +9,7 @@
 int main(int argc, char **argv)
 {
 
+    // return error if argv length is less than 3
     struct stat sourceStat;
     struct stat targetStat;
     char *DIRECTORY = "directory";
